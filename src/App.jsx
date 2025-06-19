@@ -10,7 +10,6 @@ import DetailKelasGuruView from "./feature/guru/view/DetailKelasGuru";
 import MainGuruView from "./feature/guru/view/MainGuruView";
 import TugasKelasGuruView from "./feature/guru/view/TugasKelasGuruView";
 import Class from "./pages/Course/Class";
-// import Home from "./feature/siswa/view/BerandaSiswaView";
 import LoginView from "./feature/auth/view/LoginView";
 import RegisterView from "./feature/auth/view/RegisterView";
 import JadwalSiswaView from "./feature/siswa/view/JadwalSiswaView";
@@ -26,6 +25,8 @@ import AdminLayoutSidebar from "./feature/admin/layout/AdminLayoutSidebar";
 import DetailKelasAdminView from "./feature/admin/view/DetailKelasAdminView";
 import ListKelasAdminDetailView from "./feature/admin/view/ListKelasDetailView";
 import Footer from "./feature/_global/component/Footer/Footer";
+import ProtectedRoute from "./feature/auth/component/ProtectedRoute";
+import { ToastProvider } from "./feature/_global/component/Toast/ToastProvider";
 
 function App() {
   const router = createBrowserRouter([
@@ -37,15 +38,16 @@ function App() {
     //   path: "/register",
     //   element: <RegisterView />
     // },
-    {
-      path: "/siswa",
-      element:
-        <Fragment>
-          <Navbar />
-          <Outlet />
-          <Footer/>
-        </Fragment>
-      ,
+    {      path: "/siswa",
+      element: (
+        <ProtectedRoute allowedRoles="siswa">
+          <Fragment>
+            <Navbar />
+            <Outlet />
+            <Footer/>
+          </Fragment>
+        </ProtectedRoute>
+      ),
       children: [
         {
           index: true,
@@ -69,13 +71,14 @@ function App() {
         },
 
       ]
-    },
-    {
+    },    {
       path: "/admin",
       element: (
-        <AdminLayoutSidebar>
-          <Outlet />
-        </AdminLayoutSidebar>
+        <ProtectedRoute allowedRoles="admin">
+          <AdminLayoutSidebar>
+            <Outlet />
+          </AdminLayoutSidebar>
+        </ProtectedRoute>
       ),
       children: [
         {
@@ -155,8 +158,11 @@ function App() {
       ),
     },
   ]);
-
-  return <RouterProvider router={router} />;
+  return (
+    <ToastProvider>
+      <RouterProvider router={router} />
+    </ToastProvider>
+  );
 }
 
 export default App;

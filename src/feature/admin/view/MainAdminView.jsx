@@ -35,9 +35,9 @@ const StatCard = ({ title, value, icon, color, secondaryValue, trend }) => {
                 ) : (
                   <FaArrowDown className="mr-1" />
                 )}
-                <span>
+                {/* <span>
                   {trendPercentage}% {isPositive ? "meningkat" : "menurun"}
-                </span>
+                </span> */}
               </div>
             )}
           </div>

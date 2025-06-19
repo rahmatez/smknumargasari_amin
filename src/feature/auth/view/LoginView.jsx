@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { MdAttachEmail } from "react-icons/md";
 import { RiKey2Fill } from "react-icons/ri";
@@ -9,7 +9,29 @@ import { useToast } from '../../_global/component/Toast/ToastProvider';
 
 const LoginView = () => {
   const { addToast } = useToast();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  
+  // Check if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        // Check if token is still valid
+        if (decoded.exp * 1000 > Date.now()) {
+          // Redirect to appropriate dashboard based on role
+          navigate(`/${decoded.role}`);
+        } else {
+          // Token expired, remove it
+          localStorage.removeItem('token');
+        }
+      } catch (error) {
+        // Invalid token, remove it
+        localStorage.removeItem('token');
+      }
+    }
+  }, [navigate]);
+  
   const [state, setState] = useState({
     email: '',
     password: '',

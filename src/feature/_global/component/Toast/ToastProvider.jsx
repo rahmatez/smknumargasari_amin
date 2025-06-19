@@ -3,15 +3,18 @@ import React, { createContext, useContext, useState } from 'react';
 const ToastContext = createContext();
 
 export const ToastProvider = ({ children }) => {
-    const [toasts, setToasts] = useState([]);
-
-    const addToast = (message, type = 'info') => {
-        const id = Date.now(); // Unique ID
-        setToasts((prev) => [...prev, { id, message, type }]);
-        // Auto-remove toast after 3 seconds
-        setTimeout(() => {
-            setToasts((prev) => prev.filter((toast) => toast.id !== id));
-        }, 3000);
+    const [toasts, setToasts] = useState([]);    const addToast = (message, type = 'info') => {
+        // Check if the same message already exists to prevent duplicates
+        const isDuplicate = toasts.some(toast => toast.message === message && toast.type === type);
+        
+        if (!isDuplicate) {
+            const id = Date.now(); // Unique ID
+            setToasts((prev) => [...prev, { id, message, type }]);
+            // Auto-remove toast after 3 seconds
+            setTimeout(() => {
+                setToasts((prev) => prev.filter((toast) => toast.id !== id));
+            }, 3000);
+        }
     };
 
     return (
