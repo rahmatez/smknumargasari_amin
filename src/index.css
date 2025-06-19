@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  scroll-behavior: smooth;
+  font-family: "Poppins", "Montserrat", sans-serif;
+}
+
+/* Custom animations and transitions */
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-slideUp {
+    animation: slideUp 0.5s ease-in-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .transition-custom {
+    transition: all 0.3s ease;
+  }
+
+  .hover-lift {
+    transition: transform 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-5px);
+  }
+
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Custom card styles */
+.card-custom {
+  @apply rounded-xl shadow-md overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg;
+}
+
+.card-custom-primary {
+  @apply rounded-xl shadow-md overflow-hidden border-2 border-[#6148FF] bg-white transition-all duration-300 hover:shadow-lg;
+}
+
+/* Custom button styles */
+.btn-custom-primary {
+  @apply bg-[#6148FF] text-white rounded-lg px-4 py-2 font-semibold transition-all hover:bg-[#4F3BD4] hover:shadow-lg;
+}
+
+.btn-custom-secondary {
+  @apply bg-white text-[#6148FF] border-2 border-[#6148FF] rounded-lg px-4 py-2 font-semibold transition-all hover:bg-gray-50 hover:shadow-md;
+}
+
+.btn-custom-error {
+  @apply bg-red-500 text-white rounded-lg px-4 py-2 font-semibold transition-all hover:bg-red-600 hover:shadow-lg;
+}
+
+/* Custom input styles */
+.input-custom {
+  @apply rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#6148FF] transition-all;
+}
+
+/* Improved scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6148ff;
+}

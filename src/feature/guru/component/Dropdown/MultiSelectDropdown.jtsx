@@ -1,0 +1,168 @@
+import React, { useState, useRef, useEffect } from "react";
+import { IoIosCloseCircle } from "react-icons/io";
+
+// Define TypeScript interface for option
+interface Option {
+  id: string | number;
+  label: string;
+  email: string;
+}
+
+interface MultiSelectDropdownProps {
+  options: Option[];
+  placeholder?: string;
+  onChange?: (selectedOptions: Option[]) => void;
+}
+
+const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({ 
+  options, 
+  placeholder = "Pilih nama siswa",
+  onChange 
+}) => {
+  const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Toggle dropdown
+  const toggleDropdown = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setIsOpen(prev => !prev);
+  };
+
+  // Handle option selection
+  const handleSelect = (option: Option) => {
+    const newSelectedOptions = [...selectedOptions, option];
+    setSelectedOptions(newSelectedOptions);
+    onChange?.(newSelectedOptions);
+    setIsOpen(false);
+  };
+
+  // Remove selected chip
+  const handleRemoveChip = (id: string | number) => {
+    const newSelectedOptions = selectedOptions.filter(o => o.id !== id);
+    setSelectedOptions(newSelectedOptions);
+    onChange?.(newSelectedOptions);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Filter options to only show those not selected
+  const availableOptions = options.filter(
+    option => !selectedOptions.some(selected => selected.id === option.id)
+  );
+
+  return (
+    <div className="relative w-full" ref={dropdownRef}>
+      {/* Dropdown Button */}
+      <div
+        onClick={toggleDropdown}
+        className={`
+          border border-gray-300 rounded-lg px-4 py-2 cursor-pointer 
+          flex justify-between items-center bg-white
+          ${isOpen ? 'border-blue-500' : ''}
+        `}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <span className={`${selectedOptions.length > 0 ? 'text-black' : 'text-gray-500'}`}>
+          {selectedOptions.length > 0
+            ? `${selectedOptions.length} item(s) selected`
+            : placeholder}
+        </span>
+        <svg
+          className={`w-5 h-5 transform transition-transform ${isOpen ? "rotate-180" : ""}`}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </div>
+
+      {/* Dropdown Menu */}
+      {isOpen && (
+        <div 
+          role="listbox" 
+          className="
+            absolute mt-2 w-full bg-white border border-gray-300 
+            rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto
+          "
+        >
+          {availableOptions.length > 0 ? (
+            availableOptions.map((option) => (
+              <div
+                key={option.id}
+                role="option"
+                onClick={() => handleSelect(option)}
+                className="
+                  cursor-pointer px-4 py-2 gap-2 
+                  hover:bg-gray-100 flex items-center
+                  transition-colors duration-200
+                "
+              >
+                <div>
+                  <p className="font-semibold">{option.label}</p>
+                  <p className="text-xs text-gray-500">{option.email}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="px-4 py-2 text-sm text-gray-500 text-center">
+              Semua opsi telah dipilih
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Selected Chips */}
+      {selectedOptions.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {selectedOptions.map((option) => (
+            <div
+              key={option.id}
+              className="
+                bg-blue-100 text-blue-800 px-3 py-1 rounded 
+                flex items-center gap-2 shadow-sm
+              "
+            >
+              <div>
+                <p className="font-semibold text-sm">{option.label}</p>
+                <p className="text-xs text-gray-500">{option.email}</p>
+              </div>
+              <button
+                onClick={() => handleRemoveChip(option.id)}
+                className="
+                  text-blue-500 hover:text-blue-700 
+                  transition-colors duration-200
+                "
+                aria-label={`Remove ${option.label}`}
+              >
+                <IoIosCloseCircle className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MultiSelectDropdown;
